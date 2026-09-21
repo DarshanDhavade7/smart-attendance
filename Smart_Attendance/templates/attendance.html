@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance - Smart Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <nav class="navbar">
+        <div class="nav-brand">🎓 Smart Attendance</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('students') }}">Students</a>
+            <a href="{{ url_for('mark_attendance') }}" class="active">Mark Attendance</a>
+            <a href="{{ url_for('reports') }}">Reports</a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ session['user'] }})</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h2>Mark Daily Attendance ✍️</h2>
+            <p>Select date, choose status for each student, and click Save.</p>
+        </div>
+
+        {% if message %}
+        <p style="color: #15803d; background: #dcfce7; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: bold;">
+            {{ message }}
+        </p>
+        {% endif %}
+
+        <form method="GET" action="{{ url_for('mark_attendance') }}" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <label style="font-weight: bold; color: #334155;">Select Date:</label>
+            <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 15px;">
+            <span style="font-size: 13px; color: #64748b;">(Auto refreshes on date change)</span>
+        </form>
+
+        <form method="POST" action="{{ url_for('mark_attendance') }}">
+            <input type="hidden" name="attendance_date" value="{{ selected_date }}">
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Student Name</th>
+                            <th>Class</th>
+                            <th style="text-align: center;">Status (Present / Absent)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td><b>{{ student['roll_no'] }}</b></td>
+                            <td>{{ student['name'] }}</td>
+                            <td>{{ student['class_name'] }}</td>
+                            <td style="text-align: center;">
+                                {% set status = existing_attendance.get(student['id'], 'Present') %}
+                                <label style="margin-right: 18px; cursor: pointer;">
+                                    <input type="radio" name="status_{{ student['id'] }}" value="Present" {% if status == 'Present' %}checked{% endif %}>
+                                    <span style="color: #16a34a; font-weight: bold; margin-left: 4px;">Present</span>
+                                </label>
+                                <label style="cursor: pointer;">
+                                    <input type="radio" name="status_{{ student['id'] }}" value="Absent" {% if status == 'Absent' %}checked{% endif %}>
+                                    <span style="color: #dc2626; font-weight: bold; margin-left: 4px;">Absent</span>
+                                </label>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b; padding: 25px;">
+                                No students found. Pehle <a href="{{ url_for('add_student') }}">Add Student</a> karein!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if students %}
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn btn-success" style="font-size: 15px; padding: 12px 25px;">
+                    💾 Save Attendance
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+</body>
+</html>

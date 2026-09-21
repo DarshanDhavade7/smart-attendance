@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance - Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h1>Smart Attendance</h1>
+
+        <p class="subtitle">Attendance Management System</p>
+
+        {% if error %}
+        <p style="color: red; background: #fee2e2; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-size: 14px;">
+            {{ error }}
+        </p>
+        {% endif %}
+
+        <form method="POST">
+
+            <label>Username / Roll Number</label>
+            <input type="text"
+                   name="username"
+                   placeholder="Admin: admin | Student: Roll No (e.g. 101)"
+                   required>
+
+            <label>Password</label>
+            <input type="password"
+                   name="password"
+                   placeholder="Enter password"
+                   required>
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
+
+        <div class="demo" style="line-height: 1.6; margin-top: 15px;">
+            <p>👨‍🏫 <b>Admin Login:</b> admin / admin123</p>
+            <p>🎓 <b>Student Login:</b> Roll Number / student123</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

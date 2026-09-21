@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">🎓 Smart Attendance</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
+            <a href="{{ url_for('students') }}">Students</a>
+            <a href="{{ url_for('mark_attendance') }}">Mark Attendance</a>
+            <a href="{{ url_for('reports') }}">Reports</a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ session['user'] }})</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="header-section">
+            <h2>Welcome back, {{ session['user'] }}! 👋</h2>
+            <p>Overview of today's attendance metrics and day-wise historical logs.</p>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="cards-grid">
+            <div class="card card-blue">
+                <h3>Total Students</h3>
+                <p class="count">{{ total_students }}</p>
+            </div>
+            <div class="card card-green">
+                <h3>Present Today</h3>
+                <p class="count">{{ present_today }}</p>
+            </div>
+            <div class="card card-red">
+                <h3>Absent Today</h3>
+                <p class="count">{{ absent_today }}</p>
+            </div>
+            <div class="card card-orange">
+                <h3>Today's Attendance %</h3>
+                <p class="count">{{ attendance_percentage }}%</p>
+            </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="quick-actions" style="margin-bottom: 30px;">
+            <h3>Quick Actions</h3>
+            <div class="action-buttons">
+                <a href="{{ url_for('add_student') }}" class="btn btn-primary">➕ Add New Student</a>
+                <a href="{{ url_for('mark_attendance') }}" class="btn btn-success">📝 Mark Attendance</a>
+                <a href="{{ url_for('reports') }}" class="btn btn-secondary">📊 View Full Report</a>
+            </div>
+        </div>
+
+        <!-- Daily Attendance Summary Table -->
+        <div class="header-action-row">
+            <div>
+                <h3>Daily Attendance Logs 📅</h3>
+                <p style="color: #64748b; font-size: 14px;">Date-wise breakdown of student attendance and percentages</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Total Marked</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Attendance %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in daily_history %}
+                    <tr>
+                        <td><b>{{ day.date }}</b></td>
+                        <td>{{ day.total }}</td>
+                        <td style="color: #16a34a; font-weight: bold;">{{ day.present }}</td>
+                        <td style="color: #dc2626; font-weight: bold;">{{ day.absent }}</td>
+                        <td>
+                            <span style="font-weight: bold; color: {% if day.percentage >= 75 %}#16a34a{% else %}#ea580c{% endif %};">
+                                {{ day.percentage }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">
+                            No attendance records marked yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

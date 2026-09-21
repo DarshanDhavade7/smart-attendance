@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report - Smart Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">🎓 Smart Attendance</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('students') }}">Students</a>
+            <a href="{{ url_for('mark_attendance') }}">Mark Attendance</a>
+            <a href="{{ url_for('reports') }}" class="active">Reports</a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ session['user'] }})</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="header-action-row">
+            <div>
+                <h2>Overall Attendance Report 📊</h2>
+                <p>Consolidated student-wise performance and statistics.</p>
+            </div>
+            <a href="{{ url_for('export_csv') }}" class="btn btn-secondary">📥 Export to CSV</a>
+        </div>
+
+        <!-- Report Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Total Classes</th>
+                        <th>Present Days</th>
+                        <th>Absent Days</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in reports_data %}
+                    <tr>
+                        <td><b>{{ row.roll_no }}</b></td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.class_name }}</td>
+                        <td>{{ row.total_classes }}</td>
+                        <td style="color: #16a34a; font-weight: bold;">{{ row.present_count }}</td>
+                        <td style="color: #dc2626; font-weight: bold;">{{ row.absent_count }}</td>
+                        <td>
+                            <span style="font-weight: bold; color: {% if row.percentage >= 75 %}#16a34a{% else %}#ea580c{% endif %};">
+                                {{ row.percentage }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">
+                            No attendance records available yet!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

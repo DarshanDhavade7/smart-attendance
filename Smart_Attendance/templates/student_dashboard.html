@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Smart Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">🎓 Smart Attendance (Student Portal)</div>
+        <div class="nav-links">
+            <span style="color: #cbd5e1; margin-right: 15px;">Roll No: <b>{{ student.roll_no }}</b></span>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="header-section">
+            <h2>Welcome, {{ student.name }}! 👤</h2>
+            <p>Class: <b>{{ student.class_name }}</b> | Email: {{ student.email if student.email else 'N/A' }}</p>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="cards-grid">
+            <div class="card card-blue">
+                <h3>Total Lectures</h3>
+                <p class="count">{{ total_classes }}</p>
+            </div>
+            <div class="card card-green">
+                <h3>Days Present</h3>
+                <p class="count">{{ present_count }}</p>
+            </div>
+            <div class="card card-red">
+                <h3>Days Absent</h3>
+                <p class="count">{{ absent_count }}</p>
+            </div>
+            <div class="card card-orange">
+                <h3>Attendance %</h3>
+                <p class="count">{{ percentage }}%</p>
+            </div>
+        </div>
+
+        <!-- Attendance History Header with Download Button -->
+        <div class="header-action-row">
+            <div>
+                <h3>Attendance History 📋</h3>
+                <p style="color: #64748b; font-size: 14px;">Detailed date-wise status log</p>
+            </div>
+            <a href="{{ url_for('export_student_csv') }}" class="btn btn-secondary">📥 Download My Report (CSV)</a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in history %}
+                    <tr>
+                        <td><b>{{ row.attendance_date }}</b></td>
+                        <td>
+                            {% if row.status == 'Present' %}
+                                <span style="color: #16a34a; font-weight: bold; background: #dcfce7; padding: 4px 10px; border-radius: 4px;">Present</span>
+                            {% else %}
+                                <span style="color: #dc2626; font-weight: bold; background: #fee2e2; padding: 4px 10px; border-radius: 4px;">Absent</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" style="text-align: center; color: #64748b; padding: 25px;">
+                            No attendance records marked yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
